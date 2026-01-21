@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quiz – La Celda en Excel 365</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Verdana,sans-serif;background:linear-gradient(135deg,#1e3c72,#2a5298);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.app{background:#fff;max-width:820px;width:95%;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.25);overflow:hidden}
+header{background:linear-gradient(135deg,#217346 0%,#2b8856 100%);color:#fff;padding:24px;text-align:center}
+main{padding:24px}
+.progress{margin-bottom:12px;font-weight:600;color:#217346}
+.question{font-size:1.2rem;margin-bottom:16px}
+.options{display:grid;gap:12px}
+.option{padding:12px 16px;border:2px solid #217346;border-radius:10px;background:#f7fbf9;cursor:pointer;transition:.2s;font-weight:500}
+.option:hover{background:#e6f4ee}
+.option.correct{background:#d4f6e3;border-color:#1f8f4a;color:#1f8f4a}
+.option.wrong{background:#ffe1e1;border-color:#c0392b;color:#c0392b}
+.feedback{margin-top:14px;font-weight:600}
+footer{text-align:center;padding:12px;font-size:.9rem;color:#666}
+button{margin-top:16px;padding:10px 18px;border:none;border-radius:8px;background:#217346;color:#fff;font-weight:600;cursor:pointer}
+button:hover{background:#1a5e39}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<h1>Quiz – La Celda en Excel 365</h1>
+</header>
+<main>
+<div class="progress" id="progress"></div>
+<div class="question" id="question"></div>
+<div class="options" id="options"></div>
+<div class="feedback" id="feedback"></div>
+<button id="nextBtn" style="display:none" onclick="nextQuestion()">Siguiente</button>
+</main>
+<footer>Curso: Introducción a Microsoft Excel 365</footer>
+</div>
+
+<script>
+const questions = [
+{
+q: "¿Qué es una celda en Excel?",
+options: ["Un archivo de Excel","La intersección entre una fila y una columna","Una hoja completa","Una tabla"],
+answer: 1
+},
+{
+q: "¿Cómo se identifica una celda en Excel?",
+options: ["Por su nombre","Por una letra","Por una coordenada como A1","Por un número"],
+answer: 2
+},
+{
+q: "¿Cuántas columnas existen en Excel 365?",
+options: ["1,024","10,000","16,384","65,536"],
+answer: 2
+},
+{
+q: "¿Dónde se insertan las nuevas filas al usar la opción Insertar?",
+options: ["Debajo de la selección","Arriba de la selección","Al final de la hoja","En una hoja nueva"],
+answer: 1
+},
+{
+q: "¿Qué ocurre al eliminar filas o columnas?",
+options: ["Se borra todo el archivo","Se desplazan las celdas adyacentes","No ocurre nada","Se crea una hoja nueva"],
+answer: 1
+},
+{
+q: "¿Cómo se puede modificar manualmente el ancho de una columna?",
+options: ["Con doble clic","Arrastrando el borde del encabezado","Desde Guardar como","Con Ctrl + Z"],
+answer: 1
+},
+{
+q: "¿Qué acción permite ajustar automáticamente el ancho de una columna al contenido?",
+options: ["Arrastrar","Doble clic en el borde","Ctrl + C","Cambiar de hoja"],
+answer: 1
+},
+{
+q: "¿Qué opción aparece al insertar celdas vacías?",
+options: ["Borrar archivo","Mover celdas derecha o abajo","Cambiar formato","Cerrar Excel"],
+answer: 1
+},
+{
+q: "¿Cuál es una forma válida de mover celdas seleccionadas?",
+options: ["Ctrl + C y borrar","Ctrl + X y Ctrl + V","Alt + F4","F2"],
+answer: 1
+},
+{
+q: "¿Qué tecla se mantiene presionada para mover celdas a otra hoja arrastrando?",
+options: ["Ctrl","Shift","Alt","Tab"],
+answer: 2
+}
+];
+
+let shuffled = [];
+let current = 0;
+
+function shuffle(array){return array.sort(()=>Math.random()-0.5)}
+
+function start(){
+shuffled = shuffle([...questions]);
+current = 0;
+showQuestion();
+}
+
+function showQuestion(){
+const q = shuffled[current];
+document.getElementById('progress').textContent = `Pregunta ${current+1} de ${shuffled.length}`;
+document.getElementById('question').textContent = q.q;
+const optionsDiv = document.getElementById('options');
+optionsDiv.innerHTML='';
+document.getElementById('feedback').textContent='';
+document.getElementById('nextBtn').style.display='none';
+
+q.options.forEach((opt,i)=>{
+const div=document.createElement('div');
+div.className='option';
+div.textContent=opt;
+div.onclick=()=>selectOption(div,i);
+optionsDiv.appendChild(div);
+});
+}
+
+function selectOption(div,index){
+const q=shuffled[current];
+const options=document.querySelectorAll('.option');
+options.forEach(o=>o.onclick=null);
+
+if(index===q.answer){
+div.classList.add('correct');
+document.getElementById('feedback').textContent='✅ Respuesta correcta';
+}else{
+div.classList.add('wrong');
+options[q.answer].classList.add('correct');
+document.getElementById('feedback').textContent=`❌ Respuesta incorrecta. La correcta es: ${q.options[q.answer]}`;
+}
+
+document.getElementById('nextBtn').style.display='inline-block';
+}
+
+function nextQuestion(){
+current++;
+if(current<shuffled.length){
+showQuestion();
+}else{
+endQuiz();
+}
+}
+
+function endQuiz(){
+document.getElementById('question').textContent='🎉 Quiz finalizado';
+document.getElementById('options').innerHTML='';
+document.getElementById('progress').textContent='';
+document.getElementById('feedback').textContent='Has completado el cuestionario sobre CELDAS en Excel 365.';
+document.getElementById('nextBtn').style.display='none';
+}
+
+start();
+</script>
+</body>
+</html>
